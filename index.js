@@ -4,7 +4,6 @@ const { chromium } = require('playwright');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Endpoint rahasia kita
 app.get('/api/sedot', async (req, res) => {
     console.log("[SISTEM] Menerima permintaan infiltrasi...");
     
@@ -13,7 +12,7 @@ app.get('/api/sedot', async (req, res) => {
         // Luncurkan Chromium
         browser = await chromium.launch({ 
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] // Wajib untuk server cloud
+            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
         });
         
         const context = await browser.newContext({
@@ -24,36 +23,34 @@ app.get('/api/sedot', async (req, res) => {
         console.log("[1] Mengetuk gerbang YaMeet...");
         await page.goto('http://bd.nanas.vip/bd/login', { waitUntil: 'networkidle' });
 
-        // Tunggu Cloudflare RUM selesai memvalidasi browser kita (3 detik)
+        // Tunggu Cloudflare RUM selesai memvalidasi browser kita
         await page.waitForTimeout(3000); 
 
         console.log("[2] Memasukkan kredensial rahasia...");
         await page.fill('#inviteCode', '275699'); 
-        await page.fill('#password', 'd6074eb8b0be2b9e818106218c3b1f53');
+        
+        // PENTING: Jika nanti balasan JSON-nya "Password Error" atau "Salah", 
+        // silakan ganti d6074... di bawah ini dengan PASSWORD ASLI ketikan bosku.
+        await page.fill('#password', 'butterflymanagement');
         
         console.log("[3] Mendobrak masuk...");
-        // Sesuaikan selector tombol login jika perlu (cari class atau id tombolnya)
         await page.click('a.weui-btn_primary'); 
 
-        // Tunggu sampai layar benar-benar berpindah ke dashboard
-        await page.waitForURL('**/bd/index**', { timeout: 15000 });
-        console.log("[4] Berhasil menembus Dashboard!");
+        console.log("[3.5] Menunggu respon pintu gerbang (Loading AJAX)...");
+        // Kita beri jeda 5 detik pasti cukup untuk login selesai, tanpa perlu ngecek URL
+        await page.waitForTimeout(5000); 
 
-        // Jeda manusia
-        await page.waitForTimeout(2000);
-
-        console.log("[5] Merampok brankas data...");
-        // Buka URL data JSON menggunakan session browser yang sama!
+        console.log("[4] Merampok brankas data...");
         const response = await page.goto('https://bd.nanas.vip/bd/anchor-settlement-data?pageSize=500&pageNum=1');
         
         // Ambil isi JSON-nya
         const rawJson = await response.json();
 
-        // Kembalikan data mentah ini ke PHP bosku
+        // Kembalikan data mentah ini ke layar browser bosku
         res.status(200).json({
             status: 'sukses',
             pesan: 'Brankas berhasil dijebol Playwright!',
-            data: rawJson.data || []
+            data: rawJson.data || rawJson
         });
 
     } catch (error) {
