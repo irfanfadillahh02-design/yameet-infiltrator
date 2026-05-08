@@ -1,0 +1,13 @@
+{
+  "name": "yameet-infiltrator",
+  "version": "1.0.0",
+  "description": "API Rahasia Penarik Data",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "playwright": "^1.44.0"
+  }
+}
