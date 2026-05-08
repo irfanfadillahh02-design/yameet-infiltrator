@@ -28,8 +28,8 @@ app.get('/api/sedot', async (req, res) => {
         await page.waitForTimeout(3000); 
 
         console.log("[2] Memasukkan kredensial rahasia...");
-        await page.fill('input[type="text"]', '275699'); 
-        await page.fill('input[type="password"]', 'd6074eb8b0be2b9e818106218c3b1f53');
+        await page.fill('#inviteCode', '275699'); 
+        await page.fill('#password', 'd6074eb8b0be2b9e818106218c3b1f53');
         
         console.log("[3] Mendobrak masuk...");
         // Sesuaikan selector tombol login jika perlu (cari class atau id tombolnya)
